@@ -59,11 +59,11 @@ namespace Purkki.Quartz.API
 			await table.ExecuteAsync(TableOperation.Replace(entity));
 		}
 
-		public static int GetMeasurementDuration(Measurement measurement)
+		public static int GetMeasurementDuration(Measurement measurement, DateTime now)
 		{
 			if (measurement.Running)
 			{
-				return (int)(DateTime.UtcNow - measurement.Start).TotalSeconds;
+				return (int)(now - measurement.Start).TotalSeconds;
 			}
 
 			return (int)(measurement.Stop - measurement.Start).TotalSeconds;

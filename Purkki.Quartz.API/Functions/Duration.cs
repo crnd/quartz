@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using System;
 using System.Threading.Tasks;
 
 namespace Purkki.Quartz.API.Functions
@@ -11,6 +12,7 @@ namespace Purkki.Quartz.API.Functions
 		[FunctionName("Duration")]
 		public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "{id}")]HttpRequest req, string id)
 		{
+			var now = DateTime.Now;
 			var client = Helpers.GetCloudTableClient();
 			var measurement = await Helpers.GetMeasurementAsync(client, id);
 			if (measurement == null)
@@ -22,7 +24,7 @@ namespace Purkki.Quartz.API.Functions
 			{
 				Start = measurement.Start.ToString(Constants.ISO8601DateTimeFormat),
 				Running = measurement.Running,
-				Duration = Helpers.GetMeasurementDuration(measurement)
+				Duration = Helpers.GetMeasurementDuration(measurement, now)
 			});
 		}
 	}
