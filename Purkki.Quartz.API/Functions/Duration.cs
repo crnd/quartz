@@ -12,7 +12,7 @@ namespace Purkki.Quartz.API.Functions
 		[FunctionName("Duration")]
 		public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "{id}")]HttpRequest req, string id)
 		{
-			var now = DateTime.Now;
+			var now = DateTime.UtcNow;
 			var client = Helpers.GetCloudTableClient();
 			var measurement = await Helpers.GetMeasurementAsync(client, id);
 			if (measurement == null)
