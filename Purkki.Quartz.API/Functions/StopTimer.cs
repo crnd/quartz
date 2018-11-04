@@ -29,7 +29,10 @@ namespace Purkki.Quartz.API.Functions
 			measurement.Running = false;
 			await Helpers.ReplaceMeasurementAsync(client, measurement);
 
-			return new OkResult();
+			return new OkObjectResult(new
+			{
+				Duration = Helpers.GetMeasurementDuration(measurement, now)
+			});
 		}
 	}
 }
