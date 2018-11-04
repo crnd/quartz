@@ -114,8 +114,15 @@ namespace Purkki.Quartz.API
 			}
 
 			var table = client.GetTableReference(tableName);
-			await table.CreateIfNotExistsAsync();
-			await table.ExecuteAsync(TableOperation.Insert(entity));
+			try
+			{
+				await table.ExecuteAsync(TableOperation.Insert(entity));
+			}
+			catch (StorageException e) when (e.RequestInformation.ExtendedErrorInformation.ErrorCode == Constants.TableNotFoundError)
+			{
+				await table.CreateIfNotExistsAsync();
+				await table.ExecuteAsync(TableOperation.Insert(entity));
+			}
 		}
 
 		private static async Task ReplaceTableEntityAsync<T>(CloudTableClient client, string tableName, T entity) where T : TableEntity
