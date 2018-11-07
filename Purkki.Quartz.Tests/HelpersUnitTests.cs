@@ -82,9 +82,11 @@ namespace Purkki.Quartz.Tests
 		{
 			const string id = "abc-123";
 			var table = new Mock<CloudTable>(Uri);
-			table.Setup(t => t.ExecuteAsync(It.IsAny<TableOperation>())).ReturnsAsync((TableResult)null);
+			table.Setup(t => t.ExecuteAsync(It.Is<TableOperation>(o => o.OperationType == TableOperationType.Retrieve)))
+				.ReturnsAsync((TableResult)null);
 			var client = new Mock<CloudTableClient>(Uri, new StorageCredentials());
-			client.Setup(c => c.GetTableReference(It.IsAny<string>())).Returns(table.Object);
+			client.Setup(c => c.GetTableReference(It.Is<string>(s => s == Constants.MeasurementsTableName)))
+				.Returns(table.Object);
 
 			Assert.Null(await Helpers.GetMeasurementAsync(client.Object, id));
 		}
@@ -94,24 +96,13 @@ namespace Purkki.Quartz.Tests
 		{
 			const string id = "abc-123";
 			var table = new Mock<CloudTable>(Uri);
-			table.Setup(t => t.ExecuteAsync(It.IsAny<TableOperation>())).ReturnsAsync(new TableResult { Result = new Measurement() });
+			table.Setup(t => t.ExecuteAsync(It.Is<TableOperation>(o => o.OperationType == TableOperationType.Retrieve)))
+				.ReturnsAsync(new TableResult { Result = new Measurement() });
 			var client = new Mock<CloudTableClient>(Uri, new StorageCredentials());
-			client.Setup(c => c.GetTableReference(It.IsAny<string>())).Returns(table.Object);
+			client.Setup(c => c.GetTableReference(It.Is<string>(s => s == Constants.MeasurementsTableName)))
+				.Returns(table.Object);
 
 			Assert.IsType<Measurement>(await Helpers.GetMeasurementAsync(client.Object, id));
-		}
-
-		[Fact]
-		public async Task GetMeasurementAsyncUsesRetrieveTableOperation()
-		{
-			const string id = "abc-123";
-			var table = new Mock<CloudTable>(Uri);
-			table.Setup(t => t.ExecuteAsync(It.IsAny<TableOperation>())).ReturnsAsync((TableResult)null);
-			var client = new Mock<CloudTableClient>(Uri, new StorageCredentials());
-			client.Setup(c => c.GetTableReference(It.IsAny<string>())).Returns(table.Object);
-
-			await Helpers.GetMeasurementAsync(client.Object, id);
-			table.Verify(t => t.ExecuteAsync(It.Is<TableOperation>(to => to.OperationType == TableOperationType.Retrieve)));
 		}
 
 		[Fact]
