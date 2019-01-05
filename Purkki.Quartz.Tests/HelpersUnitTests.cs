@@ -116,5 +116,17 @@ namespace Purkki.Quartz.Tests
 		{
 			Assert.ThrowsAsync<ArgumentNullException>(() => Helpers.InsertMeasurementAsync(GetGenericCloudTableClient(), null));
 		}
+
+		[Fact]
+		public void ReplaceMeasurementAsyncThrowsIfNullClient()
+		{
+			Assert.ThrowsAsync<ArgumentException>(() => Helpers.ReplaceMeasurementAsync(null, new Measurement()));
+		}
+
+		[Fact]
+		public void ReplaceMeasurementAsyncThrowsIfNullMeasurement()
+		{
+			Assert.ThrowsAsync<ArgumentNullException>(() => Helpers.ReplaceMeasurementAsync(GetGenericCloudTableClient(), null));
+		}
 	}
 }
