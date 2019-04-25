@@ -86,7 +86,7 @@ namespace Purkki.Quartz.API
 			}
 
 			var table = client.GetTableReference(tableName);
-			var retrieveOperation = TableOperation.Retrieve<Measurement>(partitionKey, rowKey);
+			var retrieveOperation = TableOperation.Retrieve<T>(partitionKey, rowKey);
 			var result = await table.ExecuteAsync(retrieveOperation);
 			if (result == null)
 			{
